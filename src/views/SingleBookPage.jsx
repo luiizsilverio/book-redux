@@ -1,23 +1,41 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Notes from '../components/Notes.jsx'
-import books from '../utils/books.js';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { selectBooks, eraseBook, toggleRead } from '../redux/booksSlice.js';
+// import books from '../utils/books.js';
 
 function SingleBookPage() {
 
   const { id } = useParams();
+
+  const books = useSelector(selectBooks);
+
   const book = books.find(item => item.id.toString() === id);
 
-    return (
-      <>
-        <div className="container">
-            <Link to="/">
-              <button className="btn">
-                  ← Back to Books
-              </button>
-            </Link>
-            
-            <div className="single-book">
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
+  function handleEraseBook(id) {
+    if (confirm('Tem certeza de que deseja excluir este livro?')) {
+      dispatch(eraseBook(id));
+      navigate('/');
+    }
+  }
+
+  return (
+    <>
+      <div className="container">
+          <Link to="/">
+            <button className="btn">
+                ← Voltar para livros
+            </button>
+          </Link>
+          
+          {book 
+            ? 
+              <div>
+                <div className="single-book">
                     <div className="book-cover">
                         <img src={book.cover} />
                     </div>
@@ -27,21 +45,29 @@ function SingleBookPage() {
                         <h4 className="book-author">{ book.author }</h4>
                         <p>{book.synopsis}</p>
                         <div className="read-checkbox">
-                            <input type="checkbox" defaultChecked={book.isRead} />
+                            <input type="checkbox" 
+                              defaultChecked={book.isRead} 
+                              onClick={() => dispatch(toggleRead(id))} 
+                            />
                             <label>{ book.isRead ? "Already Read It" : "Haven't Read it yet" }</label>
                         </div>
-                        <div className="erase-book">
-                            Erase book
+                        <div onClick={() => handleEraseBook(book.id)} className="erase-book">
+                            Excluir livro
                         </div>
                     </div>
-            </div>
+                </div>
 
-            <Notes />
-
-        </div>
-      </>
-    )
-  }
+                <Notes />
+              </div>
+            : 
+              <div>
+                <p>Livro não encontrado. Clique no botão para voltar.</p>
+              </div>
+          }
+      </div>
+    </>
+  )
+}
   
-  export default SingleBookPage
+export default SingleBookPage
   
