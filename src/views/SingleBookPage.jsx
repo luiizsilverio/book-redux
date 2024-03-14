@@ -2,7 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import Notes from '../components/Notes.jsx'
 import { useSelector, useDispatch } from 'react-redux';
 import { selectBooks, eraseBook, toggleRead } from '../redux/booksSlice.js';
-// import books from '../utils/books.js';
+import { eraseBookNotes } from '../redux/notesSlice.js';
 
 function SingleBookPage() {
 
@@ -19,6 +19,7 @@ function SingleBookPage() {
   function handleEraseBook(id) {
     if (confirm('Tem certeza de que deseja excluir este livro?')) {
       dispatch(eraseBook(id));
+      dispatch(eraseBookNotes(id));
       navigate('/');
     }
   }
@@ -57,7 +58,7 @@ function SingleBookPage() {
                     </div>
                 </div>
 
-                <Notes />
+                <Notes bookId={id} />
               </div>
             : 
               <div>

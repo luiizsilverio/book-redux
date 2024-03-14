@@ -30,7 +30,6 @@ function AddBookPage() {
     else {
       alert('Informe os campos obrigatórios');
     }
-
   }
 
   return (
